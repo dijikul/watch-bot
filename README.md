@@ -1,5 +1,5 @@
 # watch-bot
-Headless Twitch Viewbot in Python
+A (quick and dirty) Headless Twitch Viewbot in Python
 
 
 1) `pip install selenium`
