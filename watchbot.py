@@ -1,42 +1,40 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.action_chains import ActionChains
+import time
 
-# Replace with your Chromedriver executable path
-chromedriver_path = 'C:/Users/dijikul/Downloads/chromedriver.exe'
+# set the channel name
+channel_name = "LuckyLouie33"
 
-# Replace with the Twitch username you want to watch
-twitch_username = 'LuckyLouie33'
+# initialize the Firefox webdriver
+driver = webdriver.Firefox()
 
-# Initialize Chromedriver
-options = webdriver.ChromeOptions()
-options.add_argument("--start-maximized")  # Maximize window
-driver = webdriver.Chrome(chromedriver_path, options=options)
+# navigate to the Twitch homepage
+driver.get("https://www.twitch.tv/" + channel_name)
 
-# Navigate to Twitch homepage
-driver.get('https://www.twitch.tv')
+# wait for the page to load
+time.sleep(3)
 
-# Wait for the search box to load and enter the channel name
-search_box = WebDriverWait(driver, 10).until(
-    EC.presence_of_element_located((By.XPATH, '//input[@data-a-target="tw-input"]'))
-)
-search_box.send_keys(twitch_username)
-search_box.send_keys(Keys.RETURN)
+# locate the "Start Watching" div by its text
+#start_watching_div = driver.find_element_by_xpath("//div[text()='Start Watching']")
+start_watching_div = driver.find_element(By.XPATH, "//div[text()='Start Watching']")
 
-# Wait for the search results to load and click on the correct channel
-channel_link = WebDriverWait(driver, 10).until(
-    EC.presence_of_element_located((By.XPATH, f'//a[@data-a-target="preview-card-image-link"][@href="/{twitch_username}"]'))
-)
-channel_link.click()
+# click the div to start watching the stream
+start_watching_div.click()
 
-# Wait for the stream to load and click on the play button
-play_button = WebDriverWait(driver, 10).until(
-    EC.presence_of_element_located((By.XPATH, '//button[@data-a-target="player-play-pause-button"]'))
-)
-play_button.click()
+# Wait for stream to load
+time.sleep(1)
 
-# Keep the window open to watch the stream
-input('Press Enter to quit')
+### set the player volume to 0.1
+# locate the player volume slider by its ID
+player_volume_slider = driver.find_element(By.CSS_SELECTOR, "input[id^='player-volume-slider-']")
+# use ActionChains to move the slider to the desired value
+action_chains = ActionChains(driver)
+action_chains.click_and_hold(player_volume_slider).move_by_offset(-49, 0).release().perform()
+
+
+# keep the window open and the stream playing for 30 minutes
+time.sleep(1800)
+
+# close the browser
 driver.quit()
